@@ -1,0 +1,42 @@
+<MENU>Main menu
+
+  <MENU>Technical menu 4
+    <COMMAND ORDER="STRSEU SRCFILE(BERNARD85/SRC) SRCMBR(MNUMAIN) OPTION(5)"
+    />STRSEU SRCFILE(BERNARD85/SRC) SRCMBR(MNUMAIN)
+    <COMMAND ORDER="dsppfm src BIDON    "/>Display the file BIDON-2
+    <COMMAND ORDER="dsppfm src BIDON    "/>Display the file BIDON-3
+  </MENU>
+
+  <MENU>RPG study
+    <MENU>RPG study 1
+      <COMMAND ORDER="dsppfm src JRNANZ    "/>Display the RPGLE JRNANZ
+      <COMMAND ORDER="dsppfm src JRNANZ    "/>Display the RPGLE JRNANZ
+    </MENU>
+    <MENU>RPG study 2
+      <COMMAND ORDER="dsppfm src JRNANZSTAT"/>Display the RPGLE JRNANZSTAT 1
+      <COMMAND ORDER="dsppfm src JRNANZSTAT"/>Display the RPGLE JRNANZSTAT 2
+      <COMMAND ORDER="dsppfm src JRNANZSTAT"/>Display the RPGLE JRNANZSTAT 3
+      <COMMAND ORDER="dsppfm src JRNANZSTAT"/>Display the RPGLE JRNANZSTAT 4
+      <COMMAND ORDER="dsppfm src JRNANZSTAT"/>Display the RPGLE JRNANZSTAT 5
+      <COMMAND ORDER="dsppfm src JRNANZSTAT"/>Display the RPGLE JRNANZSTAT 6
+      <COMMAND ORDER="dsppfm src JRNANZSTAT"/>Display the RPGLE JRNANZSTAT 7
+      <COMMAND ORDER="dsppfm src JRNANZSTAT"/>Display the RPGLE JRNANZSTAT 8
+      <COMMAND ORDER="dsppfm src JRNANZSTAT"/>Display the RPGLE JRNANZSTAT 9
+      <COMMAND ORDER="dsppfm src JRNANZSTAT"/>Display the RPGLE JRNANZSTAT 10
+      <COMMAND ORDER="dsppfm src JRNANZSTAT"/>Display the RPGLE JRNANZSTAT 11
+      <COMMAND ORDER="dsppfm src JRNANZSTAT"/>Display the RPGLE JRNANZSTAT 12
+      <COMMAND ORDER="dsppfm src JRNANZSTAT"/>Display the RPGLE JRNANZSTAT 13
+      <COMMAND ORDER="dsppfm src JRNANZSTAT"/>Display the RPGLE JRNANZSTAT 14
+      <COMMAND ORDER="dsppfm src JRNANZSTAT"/>Display the RPGLE JRNANZSTAT 15
+      <COMMAND ORDER="dsppfm src JRNANZSTAT"/>Display the RPGLE JRNANZSTAT 16
+      <COMMAND ORDER="dsppfm src JRNANZSTAT"/>Display the RPGLE JRNANZSTAT 17
+      <COMMAND ORDER="dsppfm src JRNANZSTAT"/>Display the RPGLE JRNANZSTAT 18
+      <COMMAND ORDER="dsppfm src JRNANZSTAT"/>Display the RPGLE JRNANZSTAT 19
+      <COMMAND ORDER="dsppfm src JRNANZSTAT"/>Display the RPGLE JRNANZSTAT 20
+      <COMMAND ORDER="dsppfm src JRNANZSTAT"/>Display the RPGLE JRNANZSTAT 21
+      <COMMAND ORDER="dsppfm src JRNANZWW  "/>Display the RPGLE JRNANZWW   22
+      <COMMAND ORDER="dsppfm src JRNANZWWD "/>Display the RPGLE JRNANZWWD  23
+    </MENU>
+  </MENU>
+
+</MENU>

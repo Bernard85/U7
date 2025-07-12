@@ -1,0 +1,37 @@
+     A*%%TS  SD  20210815  043123  BERNARD85   REL-V7R1M0  5770-WDS
+     A*%%EC
+     A                                      DSPSIZ(27 132 *DS4)
+     A                                      CHGINPDFT(UL)
+     A          R HDR1
+     A*%%TS  SD  20210815  043123  BERNARD85   REL-V7R1M0  5770-WDS
+     A                                      CF03
+     A                                      CF12
+     A                                      OVERLAY
+     A                                  1 48'development of my formula interpre-
+     A                                      ter'
+     A                                      DSPATR(HI)
+     A                                  6  2'File  . . . .'
+     A            ZFILE         10A  B  6 17CHECK(LC)
+     A                                  8  2'Where . . . .'
+     A            ZWHERE        50A  B  8 17CHECK(LC)
+     A                                 10 17'*...+....1....+....2....+....3....-
+     A                                      +....4....+....5....+....6....+....-
+     A                                      7....+....8....+....9....+...10....-
+     A                                      +...11....+.'
+     A                                      DSPATR(HI)
+     A                                 11  2'Formula . . .'
+     A            FORMULA      116A  B 11 17CHECK(LC)
+     A                                 15  2'Result  . . :'
+     A            RESULT1      116A  O 15 17
+     A                                 26  2'F3=Exit'
+     A                                      COLOR(BLU)
+     A                                 26 11'F12=Cancel'
+     A                                      COLOR(BLU)
+     A          R MSGSFL                    SFL SFLMSGRCD(27)
+     A            MSGSFLKEY                 SFLMSGKEY
+     A            PGMID                     SFLPGMQ
+     A          R MSGCTL                    SFLCTL(MSGSFL)
+     A                                      SFLDSP SFLDSPCTL SFLINZ
+     A N98                                  SFLEND
+     A                                      SFLPAG(1) SFLSIZ(2)
+     A            PGMID                     SFLPGMQ
