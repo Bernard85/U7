@@ -1,0 +1,69 @@
+     A*%%TS  SD  20200216  045754  BERNARD85   REL-V7R1M0  5770-WDS
+     A*%%EC
+     A                                      DSPSIZ(27 132 *DS4)
+     A                                      CHGINPDFT(UL)
+     A          R HDR1
+     A*%%TS  SD  20200216  045754  BERNARD85   REL-V7R1M0  5770-WDS
+     A                                      OVERLAY
+     A            ZTL          131A  O  1  2DSPATR(HI)
+     A            ZLABEL        19A  O  2113
+     A                                  3  2'Type options, press Enter.'
+     A                                      COLOR(BLU)
+     A            ZCH          125A  O  4  3COLOR(BLU)
+     A          R SFL1                      SFL
+     A  02                                  SFLNXTCHG
+     A  01        XFIL1        131A  O  6  2DSPATR(HI)
+     A N01        XCHO           1A  B  6  3CHECK(LC)
+     A  03N02                               DSPATR(HI)
+     A  02                                  DSPATR(RI PC)
+     A N01        XFIL         128A  O  6  5
+     A          R CTL1                      SFLCTL(SFL1)
+     A*%%TS  SD  20190905  082934  BERNARD85   REL-V7R1M0  5770-WDS
+     A                                      SFLSIZ(0020)
+     A                                      SFLPAG(0020)
+     A                                      CSRLOC(CSRTOROW   CSRTOCOL)
+     A                                      CF01
+     A                                      CF02
+     A                                      CF03
+     A                                      CF04
+     A                                      CF05
+     A                                      CF06
+     A                                      CF07
+     A                                      CF08
+     A                                      CF09
+     A                                      CF10
+     A                                      CF11
+     A                                      CF12
+     A                                      CF13
+     A                                      CF14
+     A                                      CF15
+     A                                      CF16
+     A                                      CF17
+     A                                      CF18
+     A                                      CF19
+     A                                      CF20
+     A                                      CF21
+     A                                      CF22
+     A                                      CF23
+     A                                      CF24
+     A                                      ROLLDOWN
+     A                                      ROLLUP
+     A                                      OVERLAY
+     A                                      SFLCSRRRN(&SFLCSRRRN)
+     A  88                                  SFLDSP
+     A N89                                  SFLDSPCTL
+     A  89                                  SFLCLR
+     A            CSRTOROW       3S 0H
+     A            CSRTOCOL       3S 0H
+     A            SFLCSRRRN      5S 0H
+     A            SFLRRN1        4S 0H
+     A            MYSFLEND       7A  O 26126DSPATR(HI)
+     A            ZFK          123A  O 26  2COLOR(BLU)
+     A          R MSGSFL                    SFL SFLMSGRCD(27)
+     A            MSGSFLKEY                 SFLMSGKEY
+     A            PGMID                     SFLPGMQ(10)
+     A          R MSGCTL                    SFLCTL(MSGSFL)
+     A                                      SFLDSP SFLDSPCTL SFLINZ
+     A N98                                  SFLEND
+     A                                      SFLPAG(1) SFLSIZ(2)
+     A            PGMID                     SFLPGMQ(10)
