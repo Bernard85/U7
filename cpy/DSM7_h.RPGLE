@@ -140,3 +140,8 @@
       // refresh current screen
      d dsm_refresh     pr
      d  lScreens                       *   const
+      // set position
+     d dsm_setPos      pr
+     d  lArea                          *   const
+     d  y                             3u 0 const options(*omit)
+     d  x                             3u 0 const

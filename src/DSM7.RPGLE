@@ -218,6 +218,12 @@
        area.ry=0;
        area.rx=1;
        tree_deallocChilds(lArea:*null);
+          for ry=0 to area.height-1;
+            QsnWrtPad(' '
+                     :area.width
+                     :0:area.y+ry:area.x
+                        :area.cmdBuf:0:0);
+          endfor;
      p                 e
       // --------------------------------------------------------------------
       // refresh requested
@@ -241,6 +247,23 @@
        endIf;
      p                 e
       // --------------------------------------------------------------------
+      // print text in area and go to new line
+      // --------------------------------------------------------------------
+     pdsm_printLN      b                   export
+     d dsm_printLN     pi
+     d  lArea                          *                                   const
+     d  atr1                          1a                                   const
+     d  text                        100a   varying                         const
+      *
+     d area            ds                  likeDs(tArea) based(pArea)
+       // print
+       dsm_print(lArea:atr1:text);
+       // next Line
+       pArea=tree_getItem(lArea);
+       area.rx=1;
+       area.ry+=1;
+     p                 e
+      // --------------------------------------------------------------------
       // print text in area
       // --------------------------------------------------------------------
      pdsm_print        b                   export
@@ -258,7 +281,7 @@
                   :area.y+area.ry
                   :area.x+area.rx
                   :x'00':x'00'
-                  :atr1:x'20'
+                  :atr1:x'27'
                   :area.cmdBuf
                   :0:*omit);
        endIf;
@@ -269,23 +292,6 @@
        else;
          area.rx+=%len(text)+1;
        endIf;
-     p                 e
-      // --------------------------------------------------------------------
-      // print text in area and go to new line
-      // --------------------------------------------------------------------
-     pdsm_printLN      b                   export
-     d dsm_printLN     pi
-     d  lArea                          *                                   const
-     d  atr1                          1a                                   const
-     d  text                        100a   varying                         const
-      *
-     d area            ds                  likeDs(tArea) based(pArea)
-       // print
-       dsm_print(lArea:atr1:text);
-       // next Line
-       pArea=tree_getItem(lArea);
-       area.rx=1;
-       area.ry+=1;
      p                 e
       // --------------------------------------------------------------------
       // line next
@@ -413,7 +419,8 @@
       *
        pScreen=tree_getItem(lScreen);
        qsnclrbuf(screen.cmdbuf:*omit);
-       qsnclrScr('0':screen.cmdBuf:*omit:*omit);
+       qsnclrbuf(screen.inpbuf:*omit);
+       qsnclrScr('0':screen.cmdbuf:*omit:*omit);
        screen.toRefresh=*off;
        // loop on each area
        lArea=tree_getFirst(lScreen);
@@ -445,7 +452,8 @@
                      :fld.y:fld.x
                      :*omit:*omit
                      :dftAtr:*omit
-                     :area.cmdBuf
+                  ///:area.cmdBuf
+                     :screen.cmdBuf
                      :0:*omit);
 
              lFld=tree_getnext(lFld);
@@ -716,6 +724,22 @@
        endFor;
      p                 e
       // --------------------------------------------------------------------
+      // set position
+      // --------------------------------------------------------------------
+     pdsm_setPos       b                   export
+     d dsm_setPos      pi
+     d  lArea                          *   const
+     d  y                             3u 0 const options(*omit)
+     d  x                             3u 0 const
+      *
+     d  area           ds                  likeDs(tArea) based(pArea)
+       pArea=tree_getItem(lArea);
+       if %addr(y)<>*null;
+         area.rY=y;
+       endif;
+       area.rX=x;
+     p                 e
+      // --------------------------------------------------------------------
       // get field
       // --------------------------------------------------------------------
      pdsm_getFld       b
@@ -740,4 +764,22 @@
          lArea=tree_getNext(lArea);
        endDo;
        return *null;
+     p                 e
+      // --------------------------------------------------------------------
+      // clear the remain from position in area
+      // --------------------------------------------------------------------
+     pdsm_padArea      b                   export
+     ddsm_padArea      pi
+     d lArea                           *   const
+      *
+     d ry              s              3u 0
+     d area            ds                  likeDs(tArea) based(pArea)
+       pArea=tree_getItem(lArea);
+       for ry=0 to area.height-1;
+         QsnWrtPadAdr(' '
+                     :area.y+ry:area.x+area.width-1
+                     :area.y+rY:area.x
+                     :area.cmdBuf:0:0);
+       endfor;
+       area.rY=0;
      p                 e
