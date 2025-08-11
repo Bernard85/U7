@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<FORM ID="JRNENTRY">                                                  
+  <PANEL>IBM informations
+    <LABEL FORMULA="DTAL" MAXWIDTH="10" TEXT="Length of data"/>
+    <LABEL FORMULA="SEQN" MAXWIDTH="10" TEXT="Sequence number"/>
+    <LABEL FORMULA="CODE" MAXWIDTH="1" TEXT="Journal code"/>
+    <LABEL FORMULA="ENTT" MAXWIDTH="2" TEXT="Entry type"/>
+    <LABEL FORMULA="TSTP" MAXWIDTH="26" TEXT="Timestamp of entry"/>
+    <LABEL FORMULA="format('&1/&2/&3':JOBNO:JOBUSR:JOBID)" MAXWIDTH="28" TEXT="Name of job"/>
+    <LABEL FORMULA="PGM" MAXWIDTH="10" TEXT="Name of program"/>
+    <LABEL FORMULA="OBJ" MAXWIDTH="10" TEXT="Name of object"/>
+    <LABEL FORMULA="LIB" MAXWIDTH="10" TEXT="Object library"/>
+    <LABEL FORMULA="MBR" MAXWIDTH="10" TEXT="Name of member"/>
+    <LABEL FORMULA="CTRR" MAXWIDTH="10" TEXT="Count or relative record number"/>
+    <LABEL FORMULA="USPF" MAXWIDTH="10" TEXT="User profile"/>
+    <LABEL FORMULA="SYNM" MAXWIDTH="8" TEXT="System name"/>
+  </PANEL>
+  <PANEL>tool informations
+    <LABEL FORMULA="ASEQ" MAXWIDTH="10" TEXT="Sequence in analyse"/>
+    <LABEL FORMULA="APOS" MAXWIDTH="10" TEXT="Position in save"/>
+  </PANEL>
+</FORM>
