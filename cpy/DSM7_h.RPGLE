@@ -17,6 +17,7 @@
      d  pSetter                        *   procPtr inz(*null)
      d  pChecker                       *   procPtr inz(*null)
      d  toRefresh                      n   inz(*on)
+     d  lastFldId                     3u 0 inz(0)
       // area type
      d tArea           ds                  qualified  inz
      d  kind                          1a   inz(kArea)
@@ -28,6 +29,7 @@
      d  rX                            3u 0
      d  rY                            3u 0
      d  cmdBuf                       10i 0
+     d  cmdBuf2                      10i 0
      d  toRefresh                      n   inz(*on)
      d  pDefiner                       *   procPtr inz(*null)
       // function key
@@ -47,6 +49,7 @@
        end-ds;
       // input field
      d tFld            ds                  qualified         inz
+     d  id                            3u 0 inz(0)
      d  yx
      d   y                           10i 0 inz(0) overlay(yx)
      d   x                           10i 0 inz(0) overlay(yx:*next)
@@ -96,23 +99,25 @@
        end-pr;
       // clear and initialize the screen
      d Dsm_ClrScr      pr
+     d  lScreen                        *   const
       // clear area
      d dsm_ClearArea   pr
-     d  lArea                          *                                   const
+     d  lArea                          *   const
       // refresh requested
-     ddsm_AreaRefresh  pr
+     ddsm_AreaToRefresh...
+     d                 pr
      d  lArea                          *   const
      d  toRefresh                      n   const options(*nopass)
       // print text in area
      d dsm_print       pr
-     d  lArea                          *                                   const
-     d  atr1                          1a                                   const
-     d  text                        100a   varying                         const
+     d  lArea                          *   const
+     d  atr1                          1a   const
+     d  text                        100a   const varying
       // print text in area
      d dsm_println     pr
-     d  lArea                          *                                   const
-     d  atr1                          1a                                   const
-     d  text                        100a   varying                         const
+     d  lArea                          *   const
+     d  atr1                          1a   const
+     d  text                        100a   const varying
       // print field in area
      d dsm_printFld    pr
      d  lArea                          *   const
@@ -124,19 +129,19 @@
       // receive program message to dedicated box
      ddsm_rcvpm        pr
      d  pn                           10    const
-      // Display the screen
-     ddsm_DspScr       pr
-     d  lScreen                        *   const
       // 
      d dsm_go          pr
-     d  pgmID                        10a            const
+     d  pgmID                        10a   const
      d  lScreens                       *
-     d  screenID                     10a   varying  const
+     d  screenID                     10a   const varying
+     d  csrX                         10i 0
+     d  csrY                         10i 0
+     d lLastProcessed                  *
       // set current screen
      ddsm_setCurScreen...
      d                 pr
-     d  lScreens                       *                               const
-     d  screenID                     10a   varying                     const
+     d  lScreens                       *   const
+     d  screenID                     10a   const varying
       // refresh current screen
      d dsm_refresh     pr
      d  lScreens                       *   const
@@ -145,3 +150,8 @@
      d  lArea                          *   const
      d  y                             3u 0 const options(*omit)
      d  x                             3u 0 const
+      // get the nearest
+     d dsm_getNearest  pr              *
+     d lScreen                         *   const
+     d y                              3u 0 const
+     d x                              3u 0 const

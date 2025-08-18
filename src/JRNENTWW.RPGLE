@@ -152,7 +152,7 @@
        // Title display
        zTL='Work with journal entries '
           +journal.text
-          +'  '+journal.ID+' ';
+          +' ['+journal.ID+']';
        // work screens
        g.pScreen=%pAddr(screen1);
        g.lVariant1=tree_getFirst(g.lEntries);
@@ -735,7 +735,7 @@
          elseif %scan(option:'5j')>0;
            g.fRefresh=*on;
            jrnEntDp(rtncode:option
-                   :journal.text+'  '+journal.ID+' '
+                   :journal.text+' ['+journal.ID+']'
                    :lVariant
                    :g.hDta
                    :a.lYViews:a.lFmts:a.lForms:g.lStats);

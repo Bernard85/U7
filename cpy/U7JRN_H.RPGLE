@@ -41,7 +41,8 @@
        end-ds;
       // get item from JOURNAL family
        dcl-pr jrn_XMLinput pointer;
-         ND likeDs(xml_nodeDefine) const;
+         ND    likeDs(xml_nodeDefine) const;
+         lItem pointer                const;
        end-pr;
       // Set line for Xml parser from node on journal family
        dcl-pr jrn_XmlOutput likeDs(xml_nodeDefine);

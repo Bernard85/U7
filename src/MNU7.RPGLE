@@ -5,11 +5,12 @@
 
       /copy cpy,mnu7_h
        // --------------------------------------------------------------------
-       // get item from Xml parser for MENU family
+       // get item from Xml parser for MENU family           ****.xml --> tree
        // --------------------------------------------------------------------
        dcl-proc mnu_XmlInput export;
          dcl-pi mnu_XmlInput pointer;
-           ND const likeDs(xml_nodeDefine);
+           ND    likeDs(xml_nodeDefine) const;
+           lItem pointer                const;
          end-pi;
 
        dcl-ds mnu likeds(tMnu)  based(pMnu);
@@ -18,6 +19,9 @@
        if ND.ID='MENU';
          pMnu=tree_getnewitem(%addr(tMnu):%size(tMnu));
          mnu.text=nd.text;
+         if xml_getAttAsBoolean('CLOSED':ND.atts);
+           tree_closeLink(lItem);
+         endIf;
          return pMnu;
        elseif ND.ID='COMMAND';
          pCmd=tree_getnewitem(%addr(tCmd):%size(tCmd));
@@ -28,7 +32,7 @@
        return *null;
        end-proc;
        // --------------------------------------------------------------------
-       // Set line for Xml parser from node on file family
+       // Set line for Xml parser from node on file family  tree --> ****.xml
        // --------------------------------------------------------------------
        dcl-proc mnu_XmlOutput export;
          dcl-pi mnu_XmlOutput likeDs(xml_nodeDefine);
@@ -41,8 +45,11 @@
 
        clear ND;
        if tree_isofthekind(kMnu:lNode:pMnu);
-         ND.ID='FILE';
+         ND.ID='MENU';
          nd.text=mnu.text;
+         if tree_LinkisClosed(lNode);
+           xml_setAttfromBoolean(ND.atts:'CLOSED':*on);
+         endIf;
        elseif tree_isofthekind(kCmd:lNode:pCmd);
          ND.ID='COMMAND';
          nd.text=cmd.text;

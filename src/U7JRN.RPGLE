@@ -9,7 +9,8 @@
       // --------------------------------------------------------------------
        dcl-proc jrn_XMLinput export;
        dcl-pi jrn_XMLinput pointer;
-         ND const likeDs(xml_nodeDefine);
+         ND    likeDs(xml_nodeDefine) const;
+         lItem pointer                const;
        end-pi;
 
        dcl-ds journal likeds(tjournal) based(pjournal);
@@ -52,7 +53,7 @@
          entry.det.syNM=xml_getAttAsString ('SYNM':ND.atts);
          return pEntry;
        else;
-         return filter_XMLinput(ND);
+         return filter_XMLinput(ND:lItem);
        endIf;
        end-proc;
       // --------------------------------------------------------------------

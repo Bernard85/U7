@@ -20,5 +20,6 @@
        end-ds;
       // get item form JOURNAL ENTRY code/type  family
        dcl-pr enct_XMLinput pointer;
-         ND const likeDs(xml_nodeDefine);
+         ND    likeDs(xml_nodeDefine) const;
+         lItem pointer                const;
        end-pr;

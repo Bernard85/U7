@@ -13,7 +13,8 @@
        end-ds;
       // get item for FILE family from xml
        dcl-pr file_XmlInput pointer;
-         ND const likeDs(xml_nodeDefine);
+         ND    likeDs(xml_nodeDefine) const;
+         lItem pointer                const;
        end-pr;
       // Set line for Xml parser from node on FILE family
        dcl-pr file_XmlOutput likeDs(xml_nodeDefine);

@@ -25,7 +25,8 @@
        end-ds;
       // get item form JOURNAL family
        dcl-pr form_XMLinput pointer;
-         ND const likeDs(xml_nodeDefine);
+         ND    likeDs(xml_nodeDefine) const;
+         lItem pointer                const;
        end-pr;
       // set item for FORM family
        dcl-pr form_XMLoutput likeDs(xml_nodeDefine);

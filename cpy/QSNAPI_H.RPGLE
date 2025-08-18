@@ -224,6 +224,13 @@
      D   DataLen                     10I 0 const options(*omit)
      D   ErrorCode                32767A   options(*omit: *varsize)
       *-------------------------------------------------------------
+      * QsnRtvBufLen(): Get length of buffer
+      *-------------------------------------------------------------
+     D QsnRtvBufLen    PR            10I 0 extproc('QsnRtvBufLen')
+     D   cmdBufHandle                10I 0 const
+     D   DataLen                     10I 0 const options(*omit)
+     D   ErrorCode                32767A   options(*omit: *varsize)
+      *-------------------------------------------------------------
       * QsnGetCsrAid(): Get cursor address and function key
       *-------------------------------------------------------------
      DqsnGetCsrAdrAID  PR            10i 0 extproc('QsnGetCsrAdrAID')

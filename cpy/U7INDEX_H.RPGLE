@@ -16,7 +16,8 @@
        end-ds;
       // get item for INDEX family
        dcl-pr index_XmlInput pointer;
-         ND const likeDs(xml_nodeDefine);
+         ND    likeDs(xml_nodeDefine) const;
+         lItem pointer                const;
        end-pr;
       // Set item for INDEX family
        dcl-pr index_XmlOutput likeDs(xml_nodeDefine);

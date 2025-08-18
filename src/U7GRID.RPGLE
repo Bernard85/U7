@@ -9,7 +9,8 @@
       // --------------------------------------------------------------------
        dcl-proc grid_XmlInput export;
        dcl-pi grid_XmlInput pointer;
-         ND const likeDs(xml_nodeDefine);
+         ND    likeDs(xml_nodeDefine) const;
+         lItem pointer                const;
        end-pi;
 
        dcl-ds grid    likeds(tGrid)    based(pGrid);

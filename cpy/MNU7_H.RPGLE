@@ -13,7 +13,8 @@
        end-ds;
       // get item from xml for MENU family
        dcl-pr mnu_XmlInput pointer;
-         ND const likeDs(xml_nodeDefine);
+         ND    likeDs(xml_nodeDefine) const;
+         lItem pointer                const;
        end-pr;
       // Set line for Xml parser from node on MENU family
        dcl-pr mnu_XmlOutput likeDs(xml_nodeDefine);

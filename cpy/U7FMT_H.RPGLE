@@ -54,7 +54,8 @@
        end-pr;
       // get item for FORMAT family
        dcl-pr fmt_xmlInput pointer;
-         ND const likeDs(xml_nodeDefine);
+         ND   likeDs(xml_nodeDefine) const;
+         lItem pointer                const;
        end-pr;
       // set item for FORMAT family
        dcl-pr fmt_XMLoutput likeDs(xml_nodeDefine);

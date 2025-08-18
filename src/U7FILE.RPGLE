@@ -8,7 +8,8 @@
       // --------------------------------------------------------------------
        dcl-proc file_XmlInput export;
        dcl-pi file_XmlInput pointer;
-         ND const likeDs(xml_nodeDefine);
+         ND    likeDs(xml_nodeDefine) const;
+         lItem pointer                const;
        end-pi;
        dcl-ds file likeds(tFile) based(pFile);
        if ND.ID='FILE';

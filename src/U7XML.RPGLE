@@ -243,7 +243,7 @@
       // -----------------------------------------------------------------------
        dcl-proc  xml_writeNode export;
        dcl-pi xml_writeNode;
-         hJRN int(10) const;
+         hXML int(10) const;
          ND          likeDs(xml_nodeDefine);
        end-pi;
       *
@@ -268,7 +268,7 @@
        elseif ND.isClose;
          dta+='</'+ND.ID+'>';
        endIf;
-       ifs_println(hJRN:dta);
+       ifs_println(hXML:dta);
        end-proc;
       // --------------------------------------------------------------------
       // Save tree as XML
@@ -375,6 +375,7 @@
        ND.text=%subst(buffer:p3+1:p4-p3-1);
        ND.text=%scanRpl(x'0d25':'':ND.Text);
        ND.text=xml_seekSpecialCharacters(ND.text);
+       ND.text=%trimR(ND.text);
        curPos=P4;
        return ND;
        end-proc;
@@ -412,7 +413,8 @@
         dcl-s  lItem pointer inz(*null);
         dcl-s  pItem pointer;
         dcl-pr XXX_XmlInput pointer extProc(pXXX_XmlInput);
-          ND likeDs(xml_NodeDefine) const;
+          ND    likeDs(xml_NodeDefine) const;
+          lItem pointer                const;
         end-pr;
         ND=xml_getND(buffer:curPos);
         dow ND.isOpen;
@@ -423,7 +425,7 @@
           endIf;
           lItem=tree_checkLink(lItem:level);
           // interpret
-          pItem=XXX_XmlInput(ND);
+          pItem=XXX_XmlInput(ND:lItem);
           tree_setItem(lItem:pItem);
           // if root return it
           if level=0;

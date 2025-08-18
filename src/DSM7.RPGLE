@@ -4,7 +4,6 @@
       /copy cpy,u7tree_h
       /copy cpy,QSNAPI_H
       /copy cpy,dsm7_h
-     d fldSeqKO1       s              3u 0 inz(0)
       // --------------------------------------------------------------------
       // set current screen
       // --------------------------------------------------------------------
@@ -57,7 +56,7 @@
          pScreen=tree_getNewItem(%addr(tScreen):%size(tScreen));
          screen.ID=screenID;
          qsnCrtInpBuf(2000:200:0:screen.inpBuf:*omit);
-         qsnCrtCmdBuf(2000:200:0:screen.cmdBuf:*omit);
+         qsnCrtCmdBuf(27*132:200:0:screen.cmdBuf:*omit);
          screen.lFKS       =tree_getNewLink(*null);
          screen.pGetter =pGetter ;
          screen.pSetter =pSetter;
@@ -96,6 +95,7 @@
        area.height=height;
        area.width =width;
        qsnCrtCmdBuf(2000:200:0:area.cmdBuf:*omit);
+       qsnCrtCmdBuf(2000:200:0:area.cmdBuf2:*omit);
        area.rY=0;
        area.rX=1;
        area.pDefiner=pDefiner;
@@ -201,7 +201,12 @@
       // --------------------------------------------------------------------
      pDsm_ClrScr       b                   export
      d Dsm_ClrScr      pi
+     d  lScreen                        *   const
+      *
+     d  screen         ds                  likeDs(tScreen) based(pScreen)
         qsnClrScr('4':*omit:*omit:*omit);
+        pScreen=tree_getItem(lScreen);
+        screen.toRefresh=*on;
      p                 e
       // --------------------------------------------------------------------
       // clear area
@@ -215,6 +220,7 @@
      d screen          ds                  likeDs(tScreen) based(pScreen)
        pArea=tree_getItem(lArea);
        qsnClrBuf(area.cmdBuf:*omit);
+       qsnClrBuf(area.cmdBuf2:*omit);
        area.ry=0;
        area.rx=1;
        tree_deallocChilds(lArea:*null);
@@ -228,8 +234,10 @@
       // --------------------------------------------------------------------
       // refresh requested
       // --------------------------------------------------------------------
-     pdsm_AreaRefresh  b                   export
-     ddsm_AreaRefresh  pi
+     pdsm_AreaToRefresh...
+     p                 b                   export
+     ddsm_AreaToRefresh...
+     d                 pi
      d  lArea                          *   const
      d  toRefresh                      n   const options(*nopass)
       *
@@ -294,19 +302,6 @@
        endIf;
      p                 e
       // --------------------------------------------------------------------
-      // line next
-      // --------------------------------------------------------------------
-     pdsm_lineNext     b                   export
-     d dsm_lineNext    pi
-     d  lArea                          *
-      *
-     d area            ds                  likeDs(tArea) based(pArea)
-       // Next line
-       pArea=tree_getItem(lArea);
-       area.ry+=1;
-       area.rx=1;
-     p                 e
-      // --------------------------------------------------------------------
       // receive program message to dedicated box
       // --------------------------------------------------------------------
      pdsm_rcvPM        b                   export
@@ -358,35 +353,54 @@
       // --------------------------------------------------------------------
       // Display the screen
       // --------------------------------------------------------------------
-     pdsm_DspScr       b                   export
-     ddsm_DspScr       pi
-     d  lScreen                        *                                   const
+     pdsm_DspScr       b
+     d dsm_DspScr      pi
+     d  lScreen                        *   const
+     d lLastProcessed                  *
       *
      d  screen         ds                  likeDs(tScreen) based(pScreen)
+     d  i              s              3u 0
+     d  fldSeq         s              3u 0
+
 
        pScreen=tree_getItem(lScreen);
+       for i=1 to screen.lastFldID;
+         qsnSetFld(i
+                  :0
+                  :0:0
+                  :QSN_FFW_ALPHA_SHIFT
+                  :*omit
+                  :0
+                  :*omit
+                  :QSN_SA_GRN_UL
+                  :*omit
+                  :*omit
+                  :*omit);
+       endFor;
+
+       screen.lastFldID=0;
 
        if screen.toRefresh;
          dsm_DspScr2(lScreen);
        endIf;
+       // position
+       fldSeq=dsm_getFld2(lScreen:lLastProcessed);
+       qsnInsCsr(fldSeq
+                :0:0
+                :screen.cmdBuf
+                :*omit
+                :*omit);
        // First message (can be empty)
        qsnWrtDta(msgBox.msgTxt(1)
-                :130:0
+                :120:0
                 :27:2
                 :x'00':x'00'
                 :qsn_sa_wht:x'20'
-                :*omit
+                :screen.cmdBuf
                 :0:*omit);
-       // position
-       if fldSeqKO1>0;
-         qsnInsCsr(fldSeqKO1
-                  :0
-                  :0
-                  :*omit
-                  :*omit
-                  :*omit);
-       endif;
-       fldSeqKO1=0;
+      // send buffer to screen
+       qsnputbuf(screen.cmdBuf:0:*omit);
+       lLastProcessed=*null;
      p                 e
       // --------------------------------------------------------------------
       // Display the screen 2
@@ -419,9 +433,10 @@
       *
        pScreen=tree_getItem(lScreen);
        qsnclrbuf(screen.cmdbuf:*omit);
+       qsnClrScr('4':screen.cmdBuf:*omit:*omit);
        qsnclrbuf(screen.inpbuf:*omit);
-       qsnclrScr('0':screen.cmdbuf:*omit:*omit);
        screen.toRefresh=*off;
+       screen.lastFldId=0;
        // loop on each area
        lArea=tree_getFirst(lScreen);
        dow lArea<>*null;
@@ -429,42 +444,50 @@
          // refresh requested
          if area.toRefresh
         and area.pDefiner<>*null;
-          area.toRefresh=*off;
-          dsm_clearArea(lArea);
-          areaDefiner(lArea);
-        endif;
-          // loop on each field
-          lFld=tree_getFirst(lArea);
-          dow lFld<>*null;
-            pFld=tree_getItem(lFld);
-            a255=cliGetter(fld.lItem
-                          :fld.origin
-                          :onError);
-            if onError;
-              dftAtr=QSN_SA_GRN_UL_RI;
-            else;
-              dftAtr=Fld.defAtr;
-            endIf;
+           qsnclrbuf(area.cmdbuf:*omit);
+           area.toRefresh=*off;
+           dsm_clearArea(lArea);
+           areaDefiner(lArea);
+         endif;
+        // loop on each field
+        qsnclrbuf(area.cmdbuf2:*omit);
+        lFld=tree_getFirst(lArea);
+        dow lFld<>*null;
 
-            qsnWrtDta(A255
-                     :fld.length
-                     :0
-                     :fld.y:fld.x
-                     :*omit:*omit
-                     :dftAtr:*omit
-                  ///:area.cmdBuf
-                     :screen.cmdBuf
-                     :0:*omit);
+          pFld=tree_getItem(lFld);
+          a255=cliGetter(fld.lItem
+                        :fld.origin
+                        :onError);
+          if onError;
+            dftAtr=QSN_SA_GRN_UL_RI;
+          else;
+            dftAtr=Fld.defAtr;
+          endIf;
 
-             lFld=tree_getnext(lFld);
-           enddo;
-         ///endif;
+          qsnWrtDta(a255
+                   :fld.length
+                   :fld.id
+                   :0:0
+                   :*omit:*omit
+                   :dftAtr:*omit
+                   :area.cmdBuf2
+                   :0:*omit);
+
+           lFld=tree_getnext(lFld);
+         enddo;
+         // To clear the remain of area
+         if area.y+area.height-1>area.y+area.ry;
+           QsnWrtPadAdr(' '
+                       :area.y+area.height-1:area.x+area.width-1
+                       :area.y+area.ry      :area.x+area.rx
+                       :area.cmdBuf:0:0);
+         endIf;
          // merge buffers
-         qsncpybuf(area.cmdBuf:screen.cmdBuf:*omit);
+         qsncpybuf(area.cmdBuf :screen.cmdBuf:*omit);
+         qsncpybuf(area.cmdBuf2:screen.cmdBuf:*omit);
+
          lArea=tree_getNext(lArea);
        endDo;
-      // send buffer to screen
-       qsnputbuf(screen.cmdBuf:0:*omit);
      p                 e
       // --------------------------------------------------------------------
       // get AID
@@ -540,20 +563,21 @@
      d  pgmID                        10a            const
      d  lScreens                       *
      d  screenID                     10a   varying  const
+     d csrY                          10i 0
+     d csrX                          10i 0
+     d lLastProcessed                  *
       *
      d screens         ds                  likeDs(tScreens) based(pScreens)
      d curScreen       ds                  likeDs(tScreen)  based(pCurScreen)
      d AID             s              1a
-     d csrX            s             10i 0
-     d csrY            s             10i 0
         pScreens=tree_getItem(lScreens);
-        dsm_clrScr();
         dsm_setCurScreen(lScreens:screenID);
+        dsm_clrScr(screens.lCurScreen);
         dow screens.lCurScreen<>*null;
           // receive the messages
           dsm_RCVPM(pgmID);
           // display the screen
-          dsm_dspScr(screens.lCurScreen);
+          dsm_dspScr(screens.lCurScreen:lLastProcessed);
           // get AID
           AID=dsm_getAID(screens.lCurScreen:csrX:csrY);
           // process the FK
@@ -561,7 +585,7 @@
         endDo;
      p                 e
       // --------------------------------------------------------------------
-      // read modified fields (part 2)
+      // process function key
       // --------------------------------------------------------------------
        dcl-proc dsm_processFK export;
        dcl-pi dsm_processFK;
@@ -578,8 +602,6 @@
        dcl-s  lLast  pointer;
      d fkAction        pr                  extproc(FK.pAction)
      d ko              c                   const(*on)
-     d first           ds                  likeDs(tLink) based(lFirst)
-     d last            ds                  likeDs(tLink) based(lLast)
        // Check if the function key is allowed
        pScreen=tree_getItem(lScreen);
        // Check if the function key is allowed
@@ -596,14 +618,12 @@
          return;
        endIf;
        // Change context/libel on FK
-       lFirst=tree_getFirst(lFK);
-       lLast =tree_getLast(lFK);
        if tree_getFirst(lFK)<>tree_getLast(lFK);
          lFKC=tree_getFirst(lFK);
          lFKC=tree_getNextInLoop(lFKC);
          tree_setFirst(lFKC);
        endIf;
-       // no errors : perform the action seek to function key
+       // no errors : perform the action bound to function key
        if FK.pAction<>*null;
          fKaction();
        endIf;
@@ -630,6 +650,7 @@
      d  fldVal                      255a   const options(*nopass)
      d  fMDT                           n   const options(*nopass)
       *
+     d  screen         ds                  likeDS(tScreen) based(pScreen)
      d  Area           ds                  likeDS(tArea) based(pArea)
      d  fld            ds                  likeDs(tFld)  based(pFld)
       *
@@ -637,10 +658,13 @@
      d  x              s              3u 0
       *
        pArea=tree_getItem(lArea);
+       pScreen=tree_getItem(tree_getParent(lArea));
        y=area.y+area.ry;
        x=area.x+area.rx;
       *
-       qsnSetFld(0
+       screen.lastFldID+=1;
+      *
+       qsnSetFld(screen.lastFldID
                 :length
                 :y:x
                 :QSN_FFW_ALPHA_SHIFT
@@ -654,6 +678,7 @@
 
        pFld=tree_getNewItem(%addr(tFld):%size(tFld));
 
+       fld.id=screen.lastFldID;
        fld.y=y;
        fld.x=x;
        fld.lItem =lItem;
@@ -663,17 +688,6 @@
        fld.length=length;
        fld.origin=origin;
        tree_linkToParent(lArea:tree_getNewLink(pFld));
-       // value
-     **if %parms()>=%parmNum(fldVal);
-     **     qsnWrtDta(fldVal
-     **              :length
-     **              :0
-     **              :y:x
-     **              :*omit:*omit
-     **              :QSN_SA_GRN_UL:*omit
-     **              :area.cmdBuf
-     **              :0:*omit);
-     **endIf;
        // new position
        if area.rx+length+1>=area.width;
          area.rx=1;
@@ -729,18 +743,22 @@
      pdsm_setPos       b                   export
      d dsm_setPos      pi
      d  lArea                          *   const
-     d  y                             3u 0 const options(*omit)
-     d  x                             3u 0 const
+     d  rY                            3u 0 const options(*omit)
+     d  rX                            3u 0 const
       *
      d  area           ds                  likeDs(tArea) based(pArea)
+
        pArea=tree_getItem(lArea);
-       if %addr(y)<>*null;
-         area.rY=y;
+
+       if %addr(rY)<>*null;
+         area.rY=rY;
        endif;
-       area.rX=x;
+
+       area.rX=rX;
+
      p                 e
       // --------------------------------------------------------------------
-      // get field
+      // get field in the arborescence (by position)
       // --------------------------------------------------------------------
      pdsm_getFld       b
      d dsm_getFld      pi              *
@@ -766,20 +784,55 @@
        return *null;
      p                 e
       // --------------------------------------------------------------------
-      // clear the remain from position in area
+      // get field in the arborescence (by referenced)
       // --------------------------------------------------------------------
-     pdsm_padArea      b                   export
-     ddsm_padArea      pi
-     d lArea                           *   const
+     pdsm_getFld2      b
+     d dsm_getFld2     pi             3u 0
+     d lScreen                         *   const
+     d lLastProcessed                  *   const
       *
-     d ry              s              3u 0
-     d area            ds                  likeDs(tArea) based(pArea)
-       pArea=tree_getItem(lArea);
-       for ry=0 to area.height-1;
-         QsnWrtPadAdr(' '
-                     :area.y+ry:area.x+area.width-1
-                     :area.y+rY:area.x
-                     :area.cmdBuf:0:0);
-       endfor;
-       area.rY=0;
+     d lArea           s               *
+     d lFld            s               *
+     d fld             ds                  likeDs(tFld) based(pFld)
+       lArea=tree_getFirst(lScreen);
+       dow lArea<>*null;
+         lFld=tree_getFirst(lArea);
+         dow lFld<>*null;
+           pFld=tree_getItem(lFld);
+           if fld.lItem=lLastProcessed;
+             return fld.id;
+           endIf;
+           lFld=tree_getNext(lFld);
+         endDo;
+         lArea=tree_getNext(lArea);
+       endDo;
+       return 1;
+     p                 e
+      // --------------------------------------------------------------------
+      // get the nearest
+      // --------------------------------------------------------------------
+     pdsm_getNearest   b                   export
+     d dsm_getNearest  pi              *
+     d lScreen                         *   const
+     d y                              3u 0 const
+     d x                              3u 0 const
+      *
+     d lArea           s               *
+     d lFld            s               *
+     d fld             ds                  likeDs(tFld) based(pFld)
+       lArea=tree_getLast(lScreen);
+       dow lArea<>*null;
+         lFld=tree_getLast(lArea);
+         dow lFld<>*null;
+           pFld=tree_getItem(lFld);
+           if fld.y=y and fld.x<=x;
+             return fld.lItem;
+           elseif fld.y<y;
+             return *null;
+           endIf;
+           lFld=tree_getPrev(lFld);
+         endDo;
+         lArea=tree_getPrev(lArea);
+       endDo;
+       return *null;
      p                 e

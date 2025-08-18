@@ -18,7 +18,8 @@
        end-ds;
       // get item for FILTER family from xml
        dcl-pr filter_XmlInput pointer;
-         ND const likeDs(xml_nodeDefine);
+         ND    likeDs(xml_nodeDefine) const;
+         lItem pointer                const;
        end-pr;
       // Set line for Xml parser from node on FILE family
        dcl-pr filter_XmlOutput likeDs(xml_nodeDefine);

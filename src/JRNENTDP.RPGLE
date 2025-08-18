@@ -268,19 +268,19 @@
        if labelChg;
          xFil=int_AddSpaceDot('  '+Label.text+' ':52);
          if g.rcdChg and string1<>string2;
-           %subst(xFil:1:1)=' ';
-           %subst(xFil:53:1)=' ';
+           %subst(xFil:1:1)=x'28';
+           %subst(xFil:53:1)=x'20';
          endIf;
          if screen_getFKcontext(a.lFKS:x'3b')='1';
            %subst(xFil:60-%len(label.formula)-2:%len(label.formula)+2)
-           =' '+label.formula+x'20';
+           =x'22'+label.formula+x'20';
          endIf;
        endIf;
        // value
        %subst(xFil:62)=%subst(String1:segment*70+1:70);
        // if segment is changed:hight the changed value (before)
        if SegChg;
-// x'    %subst(xFil:59:2)=' >';
+         %subst(xFil:59:2)=x'20'+'>';
        endif;
        no+=1;
        sflrrn=no;
@@ -290,7 +290,7 @@
        // if segment is changed:hight the changed value (post)
        if SegChg;
          no+=1;
-         %subst(xFil:59:2)=' >';
+         %subst(xFil:59:2)=x'28'+'>';
          %subst(xFil:62)=%subst(String2:segment*70+1:70);
          sflrrn=no;
          write sfl1;

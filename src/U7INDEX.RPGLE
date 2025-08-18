@@ -3,12 +3,13 @@
       /copy cpy,u7tree_h
       /copy cpy,u7xml_h
       /copy cpy,u7index_h
-      // ------------------------------------------------------------------*-
+      // --------------------------------------------------------------------
       // get item for index family for Xml parser
       // --------------------------------------------------------------------
        dcl-proc index_XmlInput export;
        dcl-pi index_XmlInput pointer;
-         ND    const likeDs(xml_nodeDefine);
+         ND    likeDs(xml_nodeDefine) const;
+         lItem pointer                const;
        end-pi;
 
        dcl-ds index   likeds(tIndex) based(pIndex);

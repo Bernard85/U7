@@ -32,7 +32,8 @@
        end-ds;
       // get item from GRID family
        dcl-pr grid_XMLinput pointer;
-         ND const likeDs(xml_nodeDefine);
+         ND    likeDs(xml_nodeDefine) const;
+         lItem pointer                const;
        end-pr;
       // set line for Xml parser from node
        dcl-pr grid_XmlOutput likeDs(xml_nodeDefine);

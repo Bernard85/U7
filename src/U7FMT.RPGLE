@@ -41,7 +41,8 @@
       // -------------------------------------------------------------------
        dcl-proc  fmt_XmlInput export;
        dcl-pi fmt_xmlInput pointer;
-         ND const likeDs(xml_nodeDefine);
+         ND    likeDs(xml_nodeDefine) const;
+         lItem pointer                const;
        end-pi;
       //
        dcl-ds fmt     likeds(tformat)    based(pFmt);

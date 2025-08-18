@@ -56,6 +56,15 @@
        ifs_setbit(%addr(link.flag):fopen:*off);
        end-proc;
       // --------------------------------------------------------------------
+      // link is closed
+      // --------------------------------------------------------------------
+       dcl-proc tree_linkisClosed export;
+       dcl-pi tree_linkisClosed ind;
+         pLink pointer const;
+       end-pi;
+       return not tree_getFlag(pLink:fOpen);
+       end-proc;
+      // --------------------------------------------------------------------
       // set error on a link
       // --------------------------------------------------------------------
        dcl-proc tree_setError export;
@@ -237,16 +246,17 @@
        dcl-pi tree_getLast pointer;
          pLink_ pointer const;
        end-pi;
-       dcl-ds Link likeDs(tLink) based(pLink);
+       dcl-ds Link  likeDs(tLink) based(pLink);
+       dcl-ds Link2 likeDs(tLink) based(pLink2);
        if pLink_=*null;
          return *null;
        endif;
        pLink=pLink_;
-       pLink=Link.pFirst;
-       if pLink=*null;
+       pLink2=Link.pFirst;
+       if pLink2=*null;
          return *null;
        endif;
-       return Link.pPrev;
+       return Link2.pPrev;
        end-proc;
       // --------------------------------------------------------------------
       // get level of a link
@@ -841,10 +851,10 @@
        dcl-s lCurrent pointer;
        dcl-s lNext    pointer;
        dcl-ds Link likeDs(tLink) based(pLink);
+       pLink=pLink_;
        if pLink=*null;
          return;
        endIf;
-       pLink=pLink_;
        lCurrent=tree_getFirst(pLink);
        dow lCurrent<>*null;
          lNext=tree_getNext(lCurrent);

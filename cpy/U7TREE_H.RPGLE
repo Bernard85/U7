@@ -37,6 +37,10 @@
        dcl-pr tree_closeLink;
          pLink pointer const;
        end-pr;
+      // link is closed
+       dcl-pr tree_linkisClosed ind;
+         pLink pointer const;
+       end-pr;
       // get flag of a link
        dcl-pr tree_getFlag ind;
          pLink_ pointer const;

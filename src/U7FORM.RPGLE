@@ -8,7 +8,8 @@
       // --------------------------------------------------------------------
        dcl-proc form_XMLinput export;
        dcl-pi form_XMLinput pointer;
-         ND const likeDs(xml_nodeDefine);
+         ND    likeDs(xml_nodeDefine) const;
+         lItem pointer                const;
        end-pi;
 
        dcl-ds form  likeds(tForm) based(pForm);

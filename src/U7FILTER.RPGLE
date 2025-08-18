@@ -8,7 +8,8 @@
       // --------------------------------------------------------------------
        dcl-proc filter_XmlInput export;
        dcl-pi filter_XmlInput pointer;
-         ND const likeDs(xml_nodeDefine);
+         ND    likeDs(xml_nodeDefine) const;
+         lItem pointer                const;
        end-pi;
       //
        dcl-ds filters likeDs(tFilters) based(pFilters);

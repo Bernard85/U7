@@ -29,5 +29,6 @@
        end-ds;
       // get item for STAT family for Xml parser
        dcl-pr stat_XmlInput pointer;
-         ND const likeDs(xml_nodeDefine);
+         ND    likeDs(xml_nodeDefine) const;
+         lItem pointer                const;
        end-pr;
