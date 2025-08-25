@@ -1117,6 +1117,7 @@
          if lFilter=*null;
            pFilter=tree_getNewItem(%addr(tFilter):%size(tFilter));
            Filter.ID=Stat.ID;
+           tree_linkToParent(g.lFilters:tree_getNewLink(pFilter));
          else;
            pFilter=tree_getItem(lFilter);
          endIf;

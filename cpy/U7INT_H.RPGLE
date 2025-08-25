@@ -21,8 +21,8 @@
        dcl-c min   'abcdefghijklmnopqrstuvwxyz';
        dcl-c maj   'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
        dcl-c num   '0123456789';
-       dcl-c spec  '$%_#@';
-       dcl-c spec2 '.<(+!&]$*;^-/ ,%_>?    \ \  :#@''="[]        ~     ';
+       dcl-c spec  '$%_#@£';
+       dcl-c spec2 '.<(+!&!$*;¬-/ ,%_>?{ }\}\÷`:#@''="[]¯¨´°«»µ~éèêà';
        dcl-c colors x'202122232425262728292A2B2C2D2E3-
                       03132333435363738393A3B3C3D3E3F';
       // Check if string is displayable
