@@ -244,7 +244,7 @@
   <TYPE ID="DL"/>Record deleted in the PF member
   <TYPE ID="DR"/>Record deleted for rollback operation
   <TYPE ID="IL"/>Increment record limit
-  <TYPE ID="PT"/>Record added to a PF member.
+  <TYPE ID="PT"/>'Record added to PF member.' + OBJ
   <TYPE ID="PX"/>Record added directly by RRN
   <TYPE ID="UB"/>Before-image of a record that is updated
   <TYPE ID="UP"/>After-image of a record that is updated
