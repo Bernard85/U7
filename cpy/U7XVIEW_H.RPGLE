@@ -70,3 +70,8 @@
          gridID varchar(10) const ;
          width  uns(3)      const;
        end-pr;
+      // Load header
+       dcl-pr xview_getHdr varchar(130);
+         column       likeds(tColumn);
+         width  uns(3) const;
+       end-pr;

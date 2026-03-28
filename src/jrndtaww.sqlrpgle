@@ -36,6 +36,7 @@
          Row1_B4       int(10);
          row_Max       int(10);
          fRefresh      ind inz(*on);
+         fRefreshHdr   ind inz(*on);
          toLoad        ind inz(*on);
          error         ind;
          freePartWidth uns(3);
@@ -43,9 +44,10 @@
          lXView        pointer;
        end-ds;
       // Record id
-       dcl-ds XView likeDs(tXView) based(pXView);
-       dcl-ds file likeDs(tFile) based(pFile);
+       dcl-ds XView likeDs(tXView)   based(pXView);
+       dcl-ds file likeDs(tFile)     based(pFile);
        dcl-ds format likeDs(tFormat) based(pFormat);
+       dcl-ds grid   likeDs(tGrid  ) based(pGrid  );
        dcl-ds Rcd likeDs(tRcd);
       // Record type
        dcl-ds tRcd qualified template;
@@ -100,11 +102,17 @@
       // loop on screens
       // --------------------------------------------------------------------
        dcl-proc  wrkScreens;
+       dcl-ds column likeDs(tColumn) based(pColumn);
       *
        dcl-pr Screen extproc(g.pScreen);
        end-pr;
+       // Postionnement à gauche de la grille
+       xview.left.lColumn=tree_getNext(grid.lFixed);
+       pColumn=tree_getItem(xview.left.lColumn);
+       xview.left.width  =column.maxWidth;
+       xview.left.pos    =1;
+       xView.left.most   =*on;
        // loop on screens
-       xview_PosToMostLeft(XView:127);
        g.pScreen=%pAddr(screen1);
        g.row1=1;
        dow g.pScreen<>*null;
@@ -125,6 +133,12 @@
          msg_SndPM(pgmID:'Données relues');
          loadData();
          g.Row1_b4=g.Row1;
+         g.fRefresh=*on;
+       endIf;
+       // refresh headers
+       if g.fRefreshHDR;
+         zFil=xview2_LoadHdrs(XView:127);
+         g.fRefreshHDR=*off;
          g.fRefresh=*on;
        endIf;
        // refresh subfile
@@ -188,9 +202,6 @@
        sflClr=*on;
        write ctl1;
 
-       // header
-       sflRrn1=1;
-       zfil=xview_setHdrs(XView:0);
        // Loop on each row
        for sflRRN1=1 to 19;
          xCho=dtas(sflRRN1).choice;
@@ -200,8 +211,7 @@
          endIf;
          format.pBuffer1=dtas(sflrrn1).info;
          // Loop on each cell
-         // Loop on each cell
-         lColumn=XView.left.lColumn;
+         lColumn=tree_getFirst(XView.lGrid);
          dow 1=1;
            pColumn=tree_getItem(lColumn);
            string=int_FormulaExec(column.lFormula);
@@ -223,7 +233,11 @@
              // mid column
              %subst(xFil1:Column.pos)=%subst(String:1:column.maxWidth);
            endif;
-           lColumn=tree_getNext(lColumn);
+           if lColumn<>grid.lFixed;
+             lColumn=tree_getNext(lColumn);
+           else;
+             lColumn=xView.left.lColumn;
+           endIf;
          endDo;
          write sfl1;
        endFor;
@@ -307,28 +321,22 @@
       // F19=Left tab on all
       // --------------------------------------------------------------------
        dcl-proc  f19;
-        dcl-s fF19 ind inz(*off);
-        if not XView.Left.most;
-          g.fRefresh=*on;
-          fF19=*on;
-          xview_TabLeft(XView:127);
-        endIf;
-        if not fF19;
+        if XView.left.most;
           msg_SndPM(pgmID:'Format is on the most left position');
+        else;
+          g.fRefreshHdr=*on;
+          xview2_TabLeft(127);
         endIf;
        end-proc;
       // --------------------------------------------------------------------
       // F20=Right
       // --------------------------------------------------------------------
-       dcl-proc  f20;
-        dcl-s fF20 ind inz(*off);
-        if not XView.Right.most;
-          fF20=*on;
-          g.fRefresh=*on;
-          xview_TabRight(XView:127);
-        endIf;
-        if not fF20;
+       dcl-proc f20;
+        if XView.Right.most;
           msg_SndPM(pgmID:'Format is on the most right position');
+        else;
+          g.fRefreshHdr=*on;
+          xview2_TabRight();
         endIf;
        end-proc;
       // --------------------------------------------------------------------
@@ -339,6 +347,7 @@
        dcl-s lXView pointer;
        dcl-ds XView likeDs(tXView) based(pXView);
        dcl-s lFormat pointer;
+       dcl-s lGrid   pointer;
 
         sqlStm='select row_number() over(order by clid)'
               +',''CLIENT2$'',rrn(m) '
@@ -354,10 +363,12 @@
         // --
         lXview=xview_getXView(a.lXViews:a.lGrids:a.lFormats:'CLIENT2$');
         pXview=tree_getItem(lXView);
-        xview_posToMostLeft(XView:127);
         // --
         lFormat=fmt_GetFormat(a.lFormats:'CLIENT2$');
         pFormat=tree_getItem(lFormat);
+        // --
+        lGrid=grid_GetGrid(a.lGrids:'CLIENT2$');
+        pGrid=tree_getItem(lGrid);
        end-proc;
       // --------------------------------------------------------------------
       // ouverture du fichier
@@ -369,4 +380,95 @@
         lFile=file_getFile(a.lFiles:'CLIENT2$');
         pFile=tree_getItem(lFile);
         file.hFile=rOpen('*LIBL     /CLIENT2$':'rr,nullcap=Y');
+       end-proc;
+      // --------------------------------------------------------------------
+      // Calcul des extrèmes
+      // --------------------------------------------------------------------
+       dcl-proc xview2_LoadHdrs;
+        dcl-pi *n varChar(132);
+          xview likeDs(tXView);
+          width int(3) value;
+        end-pi;
+        dcl-s pos int(3) inz(0);
+        dcl-s hdrs Char(132) inz('');
+        dcl-s lColumn pointer;
+        dcl-ds column likeDs(tColumn) based(pColumn);
+        // Calcul de la partie fixe
+        lColumn=tree_getFirst(XView.lGrid);
+        dow lColumn<>*null;
+          pColumn=tree_getItem(lColumn);
+          %subst(hdrs:pos+1)=xView_getHdr(column:column.maxWidth);
+          column.pos=pos+1;
+          pos+=1+column.maxWidth;
+          if lColumn=grid.lFixed;
+            leave;
+          endIf;
+          lColumn=tree_getNext(lColumn);
+        endDo;
+        // Calcul de la partie libre
+        lColumn=xview.left.lColumn;
+        dow lColumn<>*null;
+          pColumn=tree_getItem(lColumn);
+          if pos+1+column.maxWidth>width;
+            leave;
+          else;
+            xview.right.lColumn=lColumn;
+            xview.right.most   =lColumn=tree_getLast(XView.lGrid);
+            xView.right.pos=1;
+            xview.right.width  =column.maxWidth;
+            %subst(hdrs:pos+1)=xView_getHdr(column:column.maxWidth);
+            Column.pos=pos+1;
+            pos+=1+column.maxWidth;
+          endif;
+          lColumn=tree_getNext(lColumn);
+        endDo;
+        return %trim(hdrs);
+       end-proc;
+      // --------------------------------------------------------------------
+      // Tabulation à droite
+      // --------------------------------------------------------------------
+       dcl-proc xview2_TabRight;
+       dcl-ds column likeds(tColumn) based(pColumn);
+        XView.left.lColumn=tree_getNext(XView.right.lColumn);
+        pColumn=tree_getItem(XView.left.lColumn);
+        XView.left.most=*off;
+        xView.left.width=column.maxWidth;
+        XView.left.pos =1;
+       end-proc;
+      // --------------------------------------------------------------------
+      // Tabulation à gauche
+      // --------------------------------------------------------------------
+       dcl-proc xview2_TabLeft;
+        dcl-pi *n;
+          width int(3) value;
+        end-pi;
+        dcl-s pos int(3) inz(0);
+        dcl-s lColumn pointer;
+        dcl-ds column likeDs(tColumn) based(pColumn);
+        // Calcul de la partie fixe
+        lColumn=tree_getFirst(XView.lGrid);
+        dow lColumn<>*null;
+          pColumn=tree_getItem(lColumn);
+          column.pos=pos+1;
+          pos+=1+column.maxWidth;
+          if lColumn=grid.lFixed;
+            leave;
+          endIf;
+          lColumn=tree_getNext(lColumn);
+        endDo;
+        // Calcul de la partie libre
+        lColumn=tree_getPrev(xview.left.lColumn);
+        dow lColumn<>*null and lColumn<>grid.lFixed;
+          pColumn=tree_getItem(lColumn);
+          if pos+1+column.maxWidth>width;
+            leave;
+          else;
+            xview.left.lColumn=lColumn;
+            xview.left.width  =column.maxWidth;
+            Column.pos=pos+1;
+            pos+=1+column.maxWidth;
+          endif;
+          lColumn=tree_getPrev(lColumn);
+        endDo;
+        xview.left.most=xview.left.lColumn=tree_getNext(grid.lFixed);
        end-proc;

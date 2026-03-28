@@ -370,7 +370,7 @@
       // --------------------------------------------------------------------
       // Load header
       // --------------------------------------------------------------------
-       dcl-proc  xview_getHdr;
+       dcl-proc  xview_getHdr export;
        dcl-pi xview_getHdr varchar(130);
          column       likeds(tColumn);
          width  uns(3) const;
