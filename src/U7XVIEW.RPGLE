@@ -103,7 +103,12 @@
          XView       likeDs(tXView);
          width uns(3) const;
        end-pi;
-       xview_PosAtLeft(XView:width:tree_getFirst(XView.lGrid):1);
+       ///
+       dcl-ds grid likeDs(tGrid) based(pGrid);
+       pGrid=tree_getItem(XView.lGrid);
+       ///xview_PosAtLeft(XView:width:tree_getFirst(XView.lGrid):1);
+       xView.left.most=*on;
+       xview_PosAtLeft(XView:width:tree_getnext(grid.lFixed):1);
        end-proc;
       // --------------------------------------------------------------------
       // position to the left
@@ -116,8 +121,10 @@
          pos     uns(3)  value;
        end-pi;
 
+       dcl-ds grid   likeDs(tGrid  ) based(pGrid  );
        dcl-ds Column likeDs(tColumn) based(pColumn);
        // Reposition --> clear the headers
+       pGrid=tree_getItem(XView.lGrid);
        xView.hdrs='';
        xView.left.lColumn=lColumn;
        pColumn=tree_getItem(lColumn);
@@ -127,7 +134,8 @@
        else;
          xView.left.pos=int_getMin(column.maxWidth-30+1:pos);
        endif;
-       xView.left.most=pos=1 and xView.left.lColumn=tree_getFirst(XView.lGrid);
+       ///iew.left.most=pos=1 and xView.left.lColumn=tree_getFirst(XView.lGrid);
+       xView.left.most=pos=1 and xView.left.lColumn=tree_getNext(grid.lFixed);
        // xxxxxxxx
        XView.left.width=int_getMin(column.maxWidth-XView.left.pos+1:width-1);
        xview_setRightColumn(XView:width);
@@ -265,6 +273,7 @@
        end-pi;
 
        dcl-s lColumn pointer;
+       dcl-ds grid   likeDs(tGrid  ) based(pGrid  );
        dcl-ds column likeDs(tColumn) based(pColumn);
        dcl-s width_ uns(3);
        width_=width;
@@ -275,10 +284,12 @@
        if XView.right.pos>1;
          return;
        endif;
+       pGrid=tree_getItem(XView.lGrid);
        // loop on middle columns to get mostleft column
        width-=xView.right.width+1;
        lColumn=tree_getprev(XView.right.lColumn);
-       dow lColumn<>*null;
+       dow lColumn<>*null
+       and lColumn<>grid.lFixed;
          pColumn=tree_getItem(lColumn);
          xView.leftColId=Column.ID;
          if column.maxwidth+1<=width;
@@ -310,13 +321,26 @@
          xView       likeds(tXView);
          pos   uns(5) value;
        end-pi;
-
-       dcl-s lColumn pointer;
+       dcl-ds grid likeDs(tGrid) based(pGrid);
+       dcl-s  lColumn pointer;
        dcl-ds Column likeDs(tColumn) based(pColumn);
        // headers filled means no tabulation has happened
        if XView.hdrs<>'';
          return XView.hdrs;
        endif;
+       // partie fixe
+       pGrid=tree_getItem(XView.lGrid);
+       lColumn=tree_getFirst(XView.lGrid);
+       dow lColumn<>*null;
+         pColumn=tree_getItem(lColumn);
+         XView.hdrs+=XView.hdrColor+xview_getHdr(column:column.maxWidth);
+         column.pos=pos;
+         pos+=1+column.maxWidth;
+         if lColumn=grid.lFixed;
+           leave;
+         endIf;
+         lColumn=tree_getNext(lColumn);
+       endDo;
        // leftmost column
        lColumn=XView.left.lcolumn;
        pColumn=tree_getItem(lColumn);

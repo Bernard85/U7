@@ -16,10 +16,27 @@
        dcl-ds grid    likeds(tGrid)    based(pGrid);
        dcl-ds subGrid likeds(tSubGrid) based(pSubGrid);
        dcl-ds column  likeds(tColumn)  based(pColumn);
+       dcl-s  fixedID varChar(10);
+       dcl-s  lcolumn pointer;
+
        if ND.ID='GRID';
          pGrid=tree_getnewitem(%addr(tGrid):%size(tGrid));
          grid.ID=xml_getAttAsString('ID':ND.atts);
          grid.text=ND.text;
+         ///
+         fixedID=xml_getAttAsString('FIXED':ND.atts);
+         if fixedID<>'';
+           lColumn=tree_getFirst(lItem);
+           dow lColumn<>*null;
+             pColumn=tree_getItem(lColumn);
+             if column.ID=fixedID;
+               grid.lFixed=lColumn;
+               leave;
+             endIf;
+             lColumn=tree_getNext(lColumn);
+           endDo;
+         endIf;
+         ///
          return pGrid;
        elseIf ND.ID='SUBGRID';
          pSubGrid=tree_getnewitem(%addr(tSubGrid):%size(tSubGrid));

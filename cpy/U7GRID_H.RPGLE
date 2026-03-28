@@ -8,7 +8,8 @@
          ID      varchar(10);
          text    char(50)   ;
          change  ind        ;
-         lFormat pointer     inz(*null);
+         lFixed  pointer  inz(*null);
+         lFormat pointer  inz(*null);
        end-ds;
       // sub-grid
        dcl-ds tSubGrid qualified;
