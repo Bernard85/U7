@@ -1,0 +1,119 @@
+     A*%%TS  SD  20260509  164822  BERNARD85   REL-V7R1M0  5770-WDS
+     A*%%EC
+     A                                      DSPSIZ(27 132 *DS4)
+     A                                      CHGINPDFT(UL)
+     A                                      PRINT
+     A                                      CF01(91)
+     A                                      HELP(91)
+     A          R HDR1
+     A*%%TS  SD  20260509  153925  BERNARD85   REL-V7R1M0  5770-WDS
+     A                                      CHANGE(90)
+     A                                      CF03
+     A                                      OVERLAY
+     A            ZTITLE       129A  O  1  2DSPATR(HI)
+     A                                  3  2'Type options, press Enter.'
+     A                                      COLOR(BLU)
+     A                                  6  2'-- option/program -----------------
+     A                                      -----------------------------'
+     A                                      DSPATR(HI)
+     A                                  6 68'-- Description --------------------
+     A                                      ----------------'
+     A                                      DSPATR(HI)
+     A                                  4  5'+=Expand  -=Colpase  5=Display'
+     A                                      COLOR(BLU)
+     A          R SFL1                      SFL
+     A*%%TS  SD  20260509  164822  BERNARD85   REL-V7R1M0  5770-WDS
+     A  88                                  SFLNXTCHG
+     A  01        XBUT01         1A  O  7  2
+     A  01        XOPT01         1A  B  7  4CHECK(LC)
+     A                                      COLOR(WHT)
+     A  88                                  DSPATR(RI)
+     A  88
+     AO 87                                  DSPATR(PC)
+     A  01        XFIL01        62A  O  7  6
+     A  02        XBUT02         1A  O  7  4
+     A  02        XOPT02         1A  B  7  6CHECK(LC)
+     A                                      COLOR(WHT)
+     A  88                                  DSPATR(RI)
+     A  88
+     AO 87                                  DSPATR(PC)
+     A  02        XFIL02        60A  O  7  8
+     A  03        XBUT03         1A  O  7  6
+     A  03        XOPT03         1A  B  7  8CHECK(LC)
+     A                                      COLOR(WHT)
+     A  88                                  DSPATR(RI)
+     A  88
+     AO 87                                  DSPATR(PC)
+     A  03        XFIL03        58A  O  7 10
+     A  04        XBUT04         1A  O  7  8
+     A  04        XOPT04         1A  B  7 10CHECK(LC)
+     A                                      COLOR(WHT)
+     A  88                                  DSPATR(RI)
+     A  88
+     AO 87                                  DSPATR(PC)
+     A  04        XFIL04        56A  O  7 12
+     A  05        XBUT05         1A  O  7 10
+     A  05        XOPT05         1A  B  7 12CHECK(LC)
+     A                                      COLOR(WHT)
+     A  88                                  DSPATR(RI)
+     A  88
+     AO 87                                  DSPATR(PC)
+     A  05        XFIL05        54A  O  7 14
+     A  06        XBUT06         1A  O  7 12
+     A  06        XOPT06         1A  B  7 14CHECK(LC)
+     A                                      COLOR(WHT)
+     A  88                                  DSPATR(RI)
+     A  88
+     AO 87                                  DSPATR(PC)
+     A  06        XFIL06        52A  O  7 16
+     A  07        XBUT07         1A  O  7 14
+     A  07        XOPT07         1A  B  7 16CHECK(LC)
+     A                                      COLOR(WHT)
+     A  88                                  DSPATR(RI)
+     A  88
+     AO 87                                  DSPATR(PC)
+     A  07        XFIL07        50A  O  7 18
+     A  08        XBUT08         1A  O  7 16
+     A  08        XOPT08         1A  B  7 18CHECK(LC)
+     A                                      COLOR(WHT)
+     A  88                                  DSPATR(RI)
+     A  88
+     AO 87                                  DSPATR(PC)
+     A  08        XFIL08        48A  O  7 20
+     A            XTEXT         50A  B  7 68CHECK(LC)
+     A N20                                  DSPATR(PR)
+     A  20                                  DSPATR(UL)
+     A          R CTL1                      SFLCTL(SFL1)
+     A                                      CSRLOC(CSRTOROW   CSRTOCOL)
+     A                                      SFLSIZ(0019)
+     A                                      SFLPAG(0019)
+     A                                      CF03
+     A                                      CF10
+     A                                      ROLLDOWN(94)
+     A                                      ROLLUP(93)
+     A                                      CF17
+     A                                      CF18
+     A***                                   CSRLOC(CSRTOROW   CSRTOCOL)
+     A                                      OVERLAY
+     A                                      SFLCSRRRN(&SFLCSRRRN)
+     A  88                                  SFLDSP
+     A N89                                  SFLDSPCTL
+     A  89                                  SFLCLR
+     A            SFLCSRRRN      5S 0H
+     A            CSRTOROW       3S 0H
+     A            CSRTOCOL       3S 0H
+     A            SFLRRN         4S 0H
+     A            MYSFLEND      11A  O 26122DSPATR(HI)
+     A            ZFKS         119   O 26  2COLOR(BLU)
+     A          R EMPTY1
+     A                                      OVERLAY
+     A                                  8  5'(No item has been found)'
+
+     A          R MSGSFL                    SFL SFLMSGRCD(27)
+     A            MSGSFLKEY                 SFLMSGKEY
+     A            PGMID                     SFLPGMQ(10)
+     A          R MSGCTL                    SFLCTL(MSGSFL)
+     A                                      SFLDSP SFLDSPCTL SFLINZ
+     A N98                                  SFLEND
+     A                                      SFLPAG(1) SFLSIZ(2)
+     A            PGMID                     SFLPGMQ(10)
